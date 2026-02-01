@@ -1,12 +1,11 @@
 {
     "name": "patryknamyslak/patbase",
-    "description": "Simple php database controller",
+    "description": "PHP database Controller",
     "type": "library",
     "require": {
-        "ext-pdo": "*",
-        "vlucas/phpdotenv": "*"
+        "ext-pdo": "*"
     },
-    "license": "CC-BY-NC-4.0",
+    "license": "MIT",
     "autoload": {
         "psr-4": {
             "PatrykNamyslak\\": "src/"

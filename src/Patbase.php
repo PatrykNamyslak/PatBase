@@ -4,121 +4,91 @@ namespace PatrykNamyslak;
 use Exception;
 use PDOException;
 /**
- * * Database class for managing database connections and queries
+ * * Singleton class for managing database connections and queries
  */
 class Patbase {
-    public \PDO $connection;
-    public string $db;
-    protected string $username;
-    protected string $password;
+    protected(set) ?\PDO $connection = NULL;
+
+
+    // Singleton Design: 
+    private static ?self $instance = NULL;
+    private static bool $isSingleton = false;
+    public static function getInstance(){
+        return self::$instance;
+    }
+    protected function setInstance(){
+        if (!self::$instance){
+            self::$instance = $this;
+        }
+    }
+
+    /** WORK IN PROGRESS TOGGLE */
+    // public static function isSingleton(bool $value){
+    //     self::$isSingleton = $value;
+    // }
+    //
+
     public string $dsn;
-    public string $database;
-    public string $table;
-    /**
-     * @param string $host : Host for your database e.g localhost.
-     * @param string $database_name : Name of the database.
-     * @param string $username : Username for your database.
-     * @param string $password : Password for your database.
-     */
-    
-    // Constructor to initialize the database connection
-    // and set the default table name
-    // Default table is 'users' if not specified
-    public function __construct(string $database_name, string $username, string $password, string $table = 'users', string $host='localhost') {
-        // Set table
-        $this->table = $table;
-        // Set database
-        $this->db = $database_name;
-        $this->database = $database_name;
-        //
-        $this->username = $username;
-        $this->password = $password;
-        $this->dsn = "mysql:host={$host};dbname={$database_name}";
-        // Create a new PDO connection with safeguards
-        $this->connect();
+    public function __construct(public string $database, protected string $username, protected string $password, string $host='localhost', ?string $dsn = null, public int $fetchMode = \PDO::FETCH_ASSOC, bool $autoConnect = true) {
+        $this->dsn = $dsn ?: "mysql:host={$host};dbname={$this->database}";
+        if ($autoConnect){
+            $this->connect();
+        }
+        $this->setInstance();
+        
+        /** WORK IN PROGRESS TOGGLE */
+        // if (self::$isSingleton){
+        //     $this->setInstance();
+        // }
     }
     // Query the database and return results
     public function query(string $query): Query{
-        return new Query(query: $query, database: $this, params: NULL);
+        return new Query(query: $query, params: NULL);
     }
     /**
      * Alias for $this->query();
      */
     public function prepare(string $query, ?array $params): Query{
-        return new Query($query, $this, $params);
+        return new Query(query: $query, params: $params);
     }
-    function __serialize(){
-        return [
-            'dsn' => $this->dsn,
-            'username' => $this->username,
-            'password' => $this->password,
-            'database' => $this->database,
-        ];
-    }
-    function __unserialize(array $data){
-        $this->dsn = $data['dsn'];
-        $this->username = $data['username'];
-        $this->password = $data['password'];
-        $this->database = $data['database'];
-        $this->connect();
-    }
+
+    /**
+     * Get the current PDO connection object
+     * @return \PDO|null
+     */
     public function connection(): \PDO {
         return $this->connection;
     }
-    private function connect(){
+
+    /**
+     * Replace the generated PDO object with your own!
+     * @param \PDO $pdo
+     * @return Patbase
+     */
+    public function setConnection(\PDO $pdo): static {
+        $this->connection = $pdo;
+        return $this;
+    }
+    public function setPDO(\PDO $pdo): static{
+        return $this->setConnection($pdo);
+    }
+
+
+    public function connect(): static{
+        if ($this->connection){
+            return $this;
+        }
         try{
-            $this->connection = new \PDO($this->dsn, $this->username, $this->password);
+            $connection = new \PDO($this->dsn, $this->username, $this->password);
+            $connection->setAttribute(\PDO::ATTR_DEFAULT_FETCH_MODE, $this->fetchMode);
+            $this->setConnection($connection);
         }catch(PDOException $e){
             throw new Exception("Database connection failed: " . $e->getMessage());
         }
+        return $this;
+    }
+    public function closeConnection(): void{
+        $this->connection = NULL;
     }
 }
-
-
-
-class Query extends Patbase{
-    protected string $query;
-    protected ?array $params;
-    public \PDO $connection;
-
-
-    protected function __construct(string $query, Patbase $database, ?array $params){
-        $this->query = $query;
-        $this->params = $params;
-        $this->connection = $database->connection;
-    }
-
-    public function fetch(){
-        if ($this->params){
-            $stmt = $this->connection->prepare($this->query);
-            $stmt->execute($this->params);
-        }else{
-            $stmt = $this->connection->query($this->query);
-        }
-        $data = $stmt->fetch(\PDO::FETCH_ASSOC);
-        return $data;
-    }
-    /**
-     * Executes a non prepared and a prepared statement
-     */
-    public function fetchAll(){
-        if ($this->params){
-            $stmt = $this->connection->prepare($this->query);
-            $stmt->execute($this->params);
-        }else{
-            $stmt = $this->connection->query($this->query);
-        }
-        $data = $stmt->fetchAll(\PDO::FETCH_ASSOC);
-        return $data;
-    }
-    public function execute(){
-        if ($this->params){
-            $stmt = $this->connection->prepare($this->query);
-            $stmt->execute($this->params);
-        }else{
-            $stmt = $this->connection->query($this->query);
-        }
-    }
-}
-
 ?>
