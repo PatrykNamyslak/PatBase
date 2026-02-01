@@ -35,6 +35,11 @@ class Patbase {
     // }
     //
 
+    /**
+     * Use this method to:
+     * * Create a new instance and store it.
+     * * Overwrite the existing self::$instance
+     */
     public function __construct(public string $database, protected string $username, protected string $password, string $host='localhost', ?string $dsn = null, public int $fetchMode = \PDO::FETCH_ASSOC, bool $autoConnect = true) {
         $this->dsn = $dsn ?: "mysql:host={$host};dbname={$this->database}";
         if ($autoConnect){
