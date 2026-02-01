@@ -2,7 +2,7 @@
 PHP database controller
 
 ## Example Usage:
-```
+```PHP
 // Create a new instance
 $db = new Patbase("bite_sized_projects", "test", "", "localhost", autoConnect: false, fetchMode: PDO::FETCH_ASSOC);
 
