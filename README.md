@@ -1,4 +1,5 @@
 # PatBase
-Simple php database controller
+PHP database controller
 
+## License
 [MIT](https://mit-license.org/)
