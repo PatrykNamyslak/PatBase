@@ -13,6 +13,7 @@ class Patbase {
 
     // Singleton Design: 
     private static ?self $instance = NULL;
+    // Ignore this for now (Not implemented)
     private static bool $isSingleton = false;
     public static function getInstance(){
         return self::$instance;
