@@ -8,6 +8,7 @@ use PDOException;
  */
 class Patbase {
     protected(set) ?\PDO $connection = NULL;
+    public string $dsn;
 
 
     // Singleton Design: 
@@ -22,25 +23,31 @@ class Patbase {
         }
     }
 
+    /**
+     * Singletons should not be cloneable
+     * @return void
+     */
+    private function __clone(){}
+
     /** WORK IN PROGRESS TOGGLE */
     // public static function isSingleton(bool $value){
     //     self::$isSingleton = $value;
     // }
     //
 
-    public string $dsn;
     public function __construct(public string $database, protected string $username, protected string $password, string $host='localhost', ?string $dsn = null, public int $fetchMode = \PDO::FETCH_ASSOC, bool $autoConnect = true) {
         $this->dsn = $dsn ?: "mysql:host={$host};dbname={$this->database}";
         if ($autoConnect){
             $this->connect();
         }
         $this->setInstance();
-        
+
         /** WORK IN PROGRESS TOGGLE */
         // if (self::$isSingleton){
         //     $this->setInstance();
         // }
     }
+
     // Query the database and return results
     public function query(string $query): Query{
         return new Query(query: $query, params: NULL);
