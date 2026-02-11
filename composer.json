@@ -1,6 +1,6 @@
 {
     "name": "patryknamyslak/patbase",
-    "description": "PHP database Controller",
+    "description": "A highly configurable DB facade and Database interaction interface (Patbase)",
     "type": "library",
     "require": {
         "ext-pdo": "*",
