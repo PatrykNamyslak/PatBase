@@ -1,34 +1,160 @@
-# PatBase
-PHP database controller
+# Patbase - Type-Safe Multi-Driver Database Abstraction
 
-## Example Usage:
-```PHP
-// Create a new instance
-$db = new Patbase("bite_sized_projects", "test", "", "localhost", autoConnect: false, fetchMode: PDO::FETCH_ASSOC);
+Stop hardcoding database drivers. Patbase provides a clean, type-safe interface for working with any PDO-supported database.
 
-// You can still update the connection config before the PDO object is created
-$db->fetchMode = PDO::FETCH_OBJ;
+## Features
+✅ **DB Facade** - DB Facade + Query builder for faster ship times!
+✅ **9 Database Drivers** - MySQL, PostgreSQL, SQLite, SQL Server, Oracle, and more  
+✅ **Type-Safe** - PHP 8.4 enums prevent invalid drivers  
+✅ **Zero Config** - Automatic DSN generation and default ports  
+✅ **Lazy Loading** - Connect only when needed  
+✅ **Clean API** - Fluent, modern PHP interface  
+✅ **Exception Handling** - Detailed error messages  
+## Installation
 
-// Query the database + Patbase::connect() is run to prevent errors but between the instantation and the query you can modify the PDO object for example
-$data = $db->query("SELECT * FROM `resume_projects`;")->fetchAll();
-
-/** OR */
-
-$db->connect();
-$data = $db->query("SELECT * FROM `resume_projects`;")->fetchAll();
+```bash
+composer require patryknamyslak/patbase
 ```
 
-## Singleton Example Usage:
+## Quick Start
+
+## DB Facade + Query Builder
 ```PHP
-/** Singleton example */
+use PatrykNamyslak\Patbase\Facades\DB;
+use PatrykNamyslak\Patbase\Enums\WhereOperator;
 
-// Here you can't change the PDO object unless you REPLACE the entire object using Patbase::setConnection() - This also overwrites the current instance that was stored
-$db = new Patbase("bite_sized_projects", "test", "", "localhost", autoConnect: true, fetchMode: PDO::FETCH_ASSOC);
+// SELECT * FROM `blog` WHERE views < :views;
+$selectQuery = DB::select([*])->from("blog")->where("views", WhereOperator::LESS_THAN, 500)->all()
+// The all() method runs the query by automatically swapping in the parameters in for the value you set in the where part of the chain!
 
-// fetch the already existing instance at $db then you can do this rather than overwriting:
-$db2 = Patbase::getInstance();
 
+DB::insert()->into("table")->...;
+DB::upsert()->into("table")->...;
+DB::delete()->from("table")->...;
+
+// TO BE ADDED!
+DB::update()->table("table")->...;
+
+```
+
+## Patbase - PDO Abstraction
+### MySQL
+```php
+use PatrykNamyslak\Patbase\Patbase;
+use PatrykNamyslak\Patbase\Enums\DatabaseDriver;
+
+$db = new Patbase(
+    driver: DatabaseDriver::MYSQL,
+    database: 'myapp',
+    username: 'root',
+    password: 'Password123@',
+    host: 'localhost',
+    port: NULL, // NULL (or omit as the default is NULL) or your custom port, NULL will default to the port based on driver type i.e MYSQL = 3306
+);
+
+$users = $db->query("SELECT * FROM `users`;")->fetchAll();
+```
+
+### PostgreSQL
+```php
+$db = new Patbase(
+    driver: DatabaseDriver::POSTGRES,
+    database: 'myapp',
+    username: 'postgres',
+    password: 'secret',
+    host: 'localhost'
+    // port: 5432 (automatic)
+);
+```
+
+### SQLite
+```php
+$db = new Patbase(
+    driver: DatabaseDriver::SQL_LITE,
+    database: './database.db'
+    // No username/password needed
+);
+```
+
+## Prepared Statements
+
+```php
+$user = $db->prepare(
+    "SELECT * FROM users WHERE email = :email",
+    [':email' => 'user@example.com']
+)->fetch();
+```
+
+## Lazy Loading
+
+```php
+// Don't connect yet
+$db = new Patbase(
+    driver: DatabaseDriver::MYSQL,
+    database: 'myapp',
+    username: 'root',
+    password: 'secret',
+    autoConnect: false
+);
+
+// Optionally modify DSN
+$db->dsn('mysql:host=127.0.0.1;port=3307;dbname=myapp');
+
+// Connect when ready (or auto-connects on first query)
+$db->connect();
+```
+
+## Supported Databases
+
+| Database | Driver Enum | Default Port |
+|----------|------------|--------------|
+| MySQL / MariaDB | `DatabaseDriver::MYSQL` | 3306 |
+| PostgreSQL | `DatabaseDriver::POSTGRES` | 5432 |
+| SQLite | `DatabaseDriver::SQL_LITE` | N/A (file) |
+| SQL Server | `DatabaseDriver::MS_SQL_SERVER` | 1433 |
+| SQL Server (Linux) | `DatabaseDriver::MS_SQL_SERVER_LINUX` | 1433 |
+| Oracle | `DatabaseDriver::ORACLE` | 1521 |
+| Firebird | `DatabaseDriver::FIREBIRD` | 3050 |
+| IBM DB2 | `DatabaseDriver::IBM_DB2` | 50000 |
+| ODBC | `DatabaseDriver::OPEN_DATABASE_CONNECTIVITY` | 50000 |
+
+## Advanced Usage
+
+### Custom PDO Options
+```php
+$db = new Patbase(
+    driver: DatabaseDriver::MYSQL,
+    database: 'myapp',
+    username: 'root',
+    password: 'secret',
+    options: [
+        PDO::ATTR_PERSISTENT => true,
+        PDO::MYSQL_ATTR_INIT_COMMAND => "SET NAMES utf8mb4"
+    ]
+);
+```
+
+### Check Connection Status
+```php
+if (!$db->isConnected()) {
+    $db->connect();
+}
+```
+
+
+### Access PDO Directly (Advanced)
+```php
+$pdo = $db->connection();
+// Use native PDO methods if needed
 ```
 
 ## License
-[MIT](https://mit-license.org/)
+
+MIT
+
+## Author
+
+**Patryk Namyslak** - [GitHub](https://github.com/PatrykNamyslak)
+
+## AI Notice
+This codebase is not written by Artificial intelligence, Only the PARTS of the README were generated by Copilot but it used my documented code as reference to make it, so you can say it just turned my scattered documentation into one concise doc.
