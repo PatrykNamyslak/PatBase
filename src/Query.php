@@ -1,13 +1,14 @@
 <?php
-namespace PatrykNamyslak;
+namespace PatrykNamyslak\Patbase;
+
+use PatrykNamyslak\Patbase;
 
 class Query extends Patbase{
 
-    protected function __construct(protected string $query, protected ?array $params = NULL){
+    protected function __construct(protected string $query, protected ?array $params = NULL, Patbase $patbase){
         // Make sure the connection is established before a query is run as by now we can assume the user forgot to connect to the database if it's still null
         if (!$this->connection){
-            $Patbase = Patbase::getInstance()->connect();
-            $this->connection = $Patbase->connection();
+            $this->connection = $patbase->connection();
         }
     }
 
