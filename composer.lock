@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "cfa78052cb56801568b477d5ca244f2c",
+    "content-hash": "6e81703d68bba275b8988bdd8758c3a1",
     "packages": [
         {
             "name": "graham-campbell/result-type",
@@ -67,43 +67,6 @@
                 }
             ],
             "time": "2025-12-27T19:43:20+00:00"
-        },
-        {
-            "name": "patryknamyslak/patflow",
-            "version": "v1.1",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/PatrykNamyslak/PatFlow.git",
-                "reference": "e0d609e70d64abc74649b73fbbf5db3810e3d254"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/PatrykNamyslak/PatFlow/zipball/e0d609e70d64abc74649b73fbbf5db3810e3d254",
-                "reference": "e0d609e70d64abc74649b73fbbf5db3810e3d254",
-                "shasum": ""
-            },
-            "type": "paravel-library",
-            "autoload": {
-                "psr-4": {
-                    "PatrykNamyslak\\PatFlow\\": "src/"
-                }
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "MIT"
-            ],
-            "authors": [
-                {
-                    "name": "Patryk Namyslak",
-                    "email": "patryk@namyslak.com"
-                }
-            ],
-            "description": "An event driven dispatch system for php",
-            "support": {
-                "issues": "https://github.com/PatrykNamyslak/PatFlow/issues",
-                "source": "https://github.com/PatrykNamyslak/PatFlow/tree/v1.1"
-            },
-            "time": "2026-02-10T20:58:36+00:00"
         },
         {
             "name": "phpoption/phpoption",
