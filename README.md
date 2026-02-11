@@ -1,4 +1,4 @@
-# Patbase - Type-Safe Multi-Driver Database Abstraction
+# Patbase - Type-Safe Multi-Driver Database Abstraction + DB Facade and Query Builder
 
 Stop hardcoding database drivers. Patbase provides a clean, type-safe interface for working with any PDO-supported database.
 
