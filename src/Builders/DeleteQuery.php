@@ -19,9 +19,4 @@ class DeleteQuery extends Query{
     protected function buildLogic(): void{
         $this->query = "DELETE FROM `{$this->table}`";
     }
-
-    public function run(): bool{
-        $this->preparedValues = array_merge($this->preparedValues, $this->whereClauseValues());
-        return $this->Parameterised__run();
-    }
 }

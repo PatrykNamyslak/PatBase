@@ -14,17 +14,13 @@ class InsertQuery extends Query{
      * Set the parameters for Parameterised statements
      * @param array $columns
      */
-    public function __construct(Patbase $db, array $columns){
+    public function __construct(Patbase $db, array $columns, bool $upsert = false){
         parent::__construct(db: $db, columns: $columns);
-        $this->setParameters(columns: $this->columns);
-    }
 
-    /**
-     * Hook to work with an array version of the `columns` before they are parsed into a string
-     * @return void
-     */
-    protected function beforeBuild(): void{
-        $this->setParameters(columns: $this->columns);
+        // Set the parameters if not a part of an upsert statement / query as an upsert statement injects the parameters
+        if (!$upsert){
+            $this->setParameters(columns: $this->columns);
+        }
     }
 
     /**

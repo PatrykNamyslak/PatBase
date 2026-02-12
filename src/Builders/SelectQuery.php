@@ -10,21 +10,18 @@ use PatrykNamyslak\Patbase\Traits\Builder\WhereClause;
 class SelectQuery extends Query{
     use From, WhereClause, Limit, Parameterised;
 
-    public function buildLogic(): void{
+    protected function buildLogic(): void{
         $this->query = "SELECT " . $this->columnsToString() . " FROM `{$this->table}`";
     }
 
+
     /**
-     * An alias for `SelectQuery::all()`
+     * Fetch all of the results
      * @return mixed
      */
-    public function run(): mixed{
-        return $this->all();
-    }
-
     public function all(): mixed{
         $this->build();
-        return $this->db->prepare($this->query, $this->preparedValues)->fetchAll();
+        return $this->run(fetch: true);
     }
 
     /**
@@ -33,6 +30,6 @@ class SelectQuery extends Query{
      */
     public function first(): mixed{
         $this->build();
-        return $this->db->prepare($this->query, $this->preparedValues)->fetch();
+        return $this->run(fetch: true, singular: true);
     }
 }

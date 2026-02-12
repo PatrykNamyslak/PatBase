@@ -79,6 +79,12 @@ final class DB{
         self::$queryBuilder = new InsertOrUpdateQuery(db: self::$db, columns: $columns);
         return self::$queryBuilder;
     }
+
+    /**
+     * Build an `update or insert` query
+     * @param string[] $columns
+     * @return Patbase\Builders\InsertOrUpdateQuery
+     */
     public static function upsert(array $columns): InsertOrUpdateQuery{
         return self::insertOrUpdate($columns);
     }

@@ -11,13 +11,13 @@ trait WhereClause{
      */
     protected array $whereClauses = [];
 
-    public final function WhereClause__beforeBuild(): void{}
-    public final function WhereClause__afterBuild(): void{
+    protected final function WhereClause__beforeBuild(): void{}
+    protected final function WhereClause__afterBuild(): void{
         if ($this->hasWhereClauses()){
             $whereClauses = $this->whereClauses();
 
             if ($whereClauses){
-                $this->query .=  " WHERE " . $whereClauses;
+                $this->query .=  " WHERE {$whereClauses}";
             }
         }
     }
@@ -29,15 +29,18 @@ trait WhereClause{
         $operator = match (true){
             $operator instanceof WhereOperator => $operator->value,
             is_string($operator) => $operator,
-            default => "="
+            default => "=",
         };
+        if ($operator === WhereOperator::CONTAINS->value){
+            $escapedValue = str_replace(['%', '_'], ['\%', '\_'], $value);
+            $clause["value"] = "%{$escapedValue}%";
+        }else{
+            $clause["value"] = $value;
+        }
+        $clause["parameter"] = ":where{$columnName}";
+        $clause["statement"] = "`{$columnName}` {$operator} " . $clause["parameter"];
         // Create a structure for prepared statements
-        $clause = [
-            "statement" => "{$columnName} {$operator} :{$columnName}",
-            "parameter" => ":" . $columnName,
-            "value" => $value,
-            "column" => $columnName,
-        ];
+        $clause["column"] = $columnName;
         $this->whereClauses[] = $clause;
         return $this;
     }
@@ -68,8 +71,11 @@ trait WhereClause{
         return array_keys($this->whereClauses, "parameter");
     }
 
-
-    protected function whereClauseValues(){
+    
+    protected function getwhereClausesAsArray(): array{
+        return $this->whereClauseValues();
+    }
+    protected function whereClauseValues(): array{
         $values = [];
         foreach($this->whereClauses as $clause){
             $values[$clause["parameter"]] = $clause["value"];

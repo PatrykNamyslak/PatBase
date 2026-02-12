@@ -2,6 +2,7 @@
 namespace PatrykNamyslak\Patbase\Blueprints;
 
 use PatrykNamyslak\Patbase;
+use PatrykNamyslak\Patbase\Traits\Builder\Core;
 use PatrykNamyslak\Patbase\Traits\Builder\Limit;
 use PatrykNamyslak\Patbase\Traits\Builder\WhereClause;
 use ReflectionClass;
@@ -10,6 +11,8 @@ use ReflectionClass;
  * Base Query Builder
  */
 abstract class Query{
+    use Core;
+    
     private static array $AFTER_BUILD_ORDER;
     /**
      * DO NOT USE "use" statements, List any traits here like this, WhereClause::class and in the __beforeBuild() we make sure to include these traits
@@ -146,4 +149,13 @@ abstract class Query{
     }
 
     abstract function run();
+
+    /**
+     * Check if the current class uses a `$trait`
+     * @param string $trait Use Trait::class
+     * @return bool
+     */
+    protected function usesTrait(string $trait): bool{
+        return in_array($trait, $this->traits);
+    }
 }

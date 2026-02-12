@@ -28,11 +28,12 @@ $selectQuery = DB::select([*])->from("blog")->where("views", WhereOperator::LESS
 // The all() method runs the query by automatically swapping in the parameters in for the value you set in the where part of the chain!
 
 
-DB::insert()->into("table")->...;
-DB::upsert()->into("table")->...;
-DB::delete()->from("table")->...;
+DB::insert()->into("table")->set("title", "New Post title");
+DB::upsert(["title"])->into("table")->...;
+// OR
+DB::insertOrUpdate()
+DB::delete()->from("blog")->where("title", WhereOperator::LIKE, "Flag API");
 
-// TO BE ADDED!
 DB::update()->table("table")->...;
 
 ```

@@ -3,10 +3,10 @@ namespace PatrykNamyslak\Patbase\Traits\Builder;
 
 
 /**
- * Adds $table capture using the `From::from()` method
+ * Adds $table capture using the `Table::table()` method
  */
-trait From{
-    public function from(string $table): static{
+trait Table{
+    public function table(string $table): static{
         $this->table = $table;
         return $this;
     }

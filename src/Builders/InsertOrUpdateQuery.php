@@ -25,7 +25,7 @@ class InsertOrUpdateQuery extends Query{
     protected function beforeBuild(): void{
         // Get the `insert` part of the query from the already existing `InsertQuery::build()` logic and remove the end semi colon from the query
         $this->insertQuery = trim(
-            string: new InsertQuery(db: $this->db, columns: $this->columns)->into(table: $this->table)->build()->builtQuery(), 
+            string: new InsertQuery(db: $this->db, columns: $this->columns, upsert: true)->into(table: $this->table)->setParametersFromParamsArray($this->getSetParameters())->build()->builtQuery(), 
             characters: ";"
             );
     }
@@ -36,17 +36,16 @@ class InsertOrUpdateQuery extends Query{
      */
     protected function buildLogic(): void{
         $this->query = $this->insertQuery . " " . "ON DUPLICATE KEY UPDATE";
-        $lastParameter = $this->parameters[count($this->parameters) - 1];
+        $lastParameter = $this->array_last($this->getSetParameters());
         // Add the update logic to the query
-        foreach($this->parameters as $parameter){
-            $column = trim($parameter, ":");
+        foreach($this->getSetParameters() as $parameter){
+            $column = $this->getColumnFromParameter($parameter);
             $this->query .= " " . $column . " = VALUES($column)";
             // Append a comma if not at last parameter.
             if ($parameter !== $lastParameter){
                 $this->query .= ",";
             }
         }
-        $this->query .= ";";
     }
 
 
