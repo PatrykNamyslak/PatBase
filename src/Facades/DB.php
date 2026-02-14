@@ -1,6 +1,7 @@
 <?php
 namespace PatrykNamyslak\Patbase\Facades;
 
+use Dotenv\Dotenv;
 use PatrykNamyslak\Patbase;
 use PatrykNamyslak\Patbase\Builders\DeleteQuery;
 use PatrykNamyslak\Patbase\Builders\InsertOrUpdateQuery;
@@ -32,13 +33,12 @@ final class DB{
 
     /**
      * Maps the environment variables to the stored config
-     * @param string $envFileDirectory For example `"/srv/websites/my_site/"` (do not include .env)
-     * * If it is left as `NULL` it will default to the `DOCUMENT_ROOT` stored in `$_SERVER`.
+     * @param Dotenv Pass in a valid env loader by using `Dotenv\Dotenv::createImmutable()` or any method that returns an instance of `Dotenv\Dotenv` Read more at: https://github.com/vlucas/phpdotenv.
      * @return Config
      */
-    public static function configureFromEnv(?string $envFileDirectory = NULL): void{
+    public static function configureFromEnv(Dotenv $envLoader): void{
         $config = new Config();
-        self::loadEnv($envFileDirectory ?? $config->envFileDirectory);
+        self::loadEnv(envLoader: $envLoader);
         $config->host = $_ENV[EnvironmentVariable::HOST->value];
         $config->database = $_ENV[EnvironmentVariable::DATABASE->value];
         $config->driverType($_ENV[EnvironmentVariable::DRIVER->value]);

@@ -8,20 +8,21 @@ use PatrykNamyslak\Patbase\Enums\DatabaseDriver;
  * Object for the DB facade configuration
  */
 final class Config{
-    public ?DatabaseDriver $driverType = DatabaseDriver::MYSQL;
-    public ?string $host = NULL;
-    public ?string $username = NULL;
-    public ?string $password = NULL;
-    public ?string $database = NULL;
-    public int|string|null $port = NULL;
-    public ?int $fetchMode = \PDO::FETCH_OBJ;
-    public bool $autoConnect = true;
-    public ?array $options = [];
-    public string $envFileDirectory;
 
-    public function __construct(public ?bool $autoLoad = true){
-        $this->envFileDirectory = $_SERVER["DOCUMENT_ROOT"] . "/";
-    }
+
+    public function __construct(
+        public readonly bool $autoLoad = true,
+        public readonly DatabaseDriver $driverType = DatabaseDriver::MYSQL,
+        public readonly ?string $host = NULL,
+        public readonly ?string $username = NULL,
+        public readonly ?string $password = NULL,
+        public readonly ?string $database = NULL,
+        public readonly ?int $port = NULL,
+        public readonly int $fetchMode = \PDO::FETCH_OBJ,
+        public readonly bool $autoConnect = true,
+        public readonly array $options = [],
+        public readonly ?string $envFileDirectory = null,
+        ){}
 
     /** Sets the driver type and if one is not found with the value of $type, it defaults to MYSQL */
     public function driverType(string $type = DatabaseDriver::MYSQL->value): void{

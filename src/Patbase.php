@@ -41,7 +41,7 @@ class Patbase {
         protected ?array $options = NULL,
         ){
             // Just a little heads up in case you choose the wrong driver by accident
-            if ($driverType === DatabaseDriver::SQL_LITE and ($username or $password)){
+            if ($driverType === DatabaseDriver::SQL_LITE && ($username or $password)){
                 trigger_error("If you are using SQL lite you do not need a username or password!", E_WARNING);
             }
             $this->port = match($this->port){

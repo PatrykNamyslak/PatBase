@@ -7,6 +7,7 @@ use PatrykNamyslak\Patbase\Enums\EnvironmentVariable;
 use PatrykNamyslak\Patbase\Support\Config;
 trait Core{
     protected static Config $config;
+    protected static Dotenv $envLoader;
     
     public static function configureFromEnv(){
         $keys = self::configKeys();
@@ -15,8 +16,9 @@ trait Core{
         }
     }
 
-    public static function loadEnv(string $envFileDirectory){
-        $dotenv = Dotenv::createImmutable($envFileDirectory);
+    public static function loadEnv(Dotenv $envLoader){
+        self::$envLoader = self::$envLoader ?? $envLoader;
+        $dotenv = self::$envLoader;
         $dotenv->load();
 
         $dotenv

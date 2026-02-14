@@ -23,7 +23,7 @@ trait WhereClause{
     }
 
     public function where(string $columnName, string|WhereOperator $operator = WhereOperator::EQUALS, string|int|bool $value): static{
-        if (is_string($operator) and !in_array($operator, array_column(WhereOperator::cases(), "value"))){
+        if (is_string($operator) && !in_array($operator, array_column(WhereOperator::cases(), "value"))){
             throw new UnexpectedValueException('$operator must be a valid character that is in ' . WhereOperator::class);
         }
         $operator = match (true){

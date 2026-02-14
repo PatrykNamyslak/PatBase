@@ -112,8 +112,8 @@ trait Parameterised{
         $this->build();
         try{
             $result = match (true){
-                $fetch and $singular => $this->db->prepare($this->query, $this->preparedValues)->fetch(),
-                $fetch and !$singular => $this->db->prepare($this->query, $this->preparedValues)->fetchAll(),
+                $fetch && $singular => $this->db->prepare($this->query, $this->preparedValues)->fetch(),
+                $fetch && !$singular => $this->db->prepare($this->query, $this->preparedValues)->fetchAll(),
                 default => $this->db->prepare($this->query, $this->preparedValues)->execute(),
             };
         }catch(Throwable $t){
