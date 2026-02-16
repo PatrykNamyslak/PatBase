@@ -24,7 +24,7 @@ final class DB{
     /**
      * The patbase instance that is used for DB calls
      */
-    private static Patbase $db;
+    private static ?Patbase $db = NULL;
     private static Query $queryBuilder;
 
     public static function configure(Config $configuration){
@@ -37,16 +37,19 @@ final class DB{
      * @return Config
      */
     public static function configureFromEnv(Dotenv $envLoader): void{
-        $config = new Config();
         self::loadEnv(envLoader: $envLoader);
-        $config->host = $_ENV[EnvironmentVariable::HOST->value];
-        $config->database = $_ENV[EnvironmentVariable::DATABASE->value];
-        $config->driverType($_ENV[EnvironmentVariable::DRIVER->value]);
-        $config->fetchMode(mode: $_ENV[EnvironmentVariable::FETCH_MODE->value]);
-        $config->username = $_ENV[EnvironmentVariable::USERNAME->value];
-        $config->password = $_ENV[EnvironmentVariable::PASSWORD->value];
+        $config = new Config(
+            autoLoad: true,
+            driverType: DatabaseDriver::tryFrom($_ENV[EnvironmentVariable::DRIVER->value]) ?? DatabaseDriver::MYSQL,
+            host: $_ENV[EnvironmentVariable::HOST->value],
+            username: $_ENV[EnvironmentVariable::USERNAME->value],
+            password: $_ENV[EnvironmentVariable::PASSWORD->value],
+            database: $_ENV[EnvironmentVariable::DATABASE->value],
+            port: $_ENV[EnvironmentVariable::PORT->value],
+            fetchMode: Config::fetchMode($_ENV[EnvironmentVariable::FETCH_MODE->value]),
+            lazyLoad: filter_var($_ENV[EnvironmentVariable::LAZY_LOAD->value], FILTER_VALIDATE_BOOLEAN),
+        );
         // autoConnect is true when lazy load is false in the .env
-        $config->autoConnect = !(filter_var($_ENV[EnvironmentVariable::LAZY_LOAD->value], FILTER_VALIDATE_BOOLEAN));
         self::configure($config);
     }
 
@@ -55,6 +58,9 @@ final class DB{
         self::$db->connect();
     }
     public static function select(string|array $columns = ["*"]): SelectQuery{
+        if (!self::$db && self::$config->lazyLoad){
+            self::connect();
+        }
         $columns = match(true){
             $columns === [], empty($columns) => ["*"],
             is_string($columns) => array($columns),
@@ -64,24 +70,36 @@ final class DB{
         return self::$queryBuilder;
     }
     public static function insert(array $columns): InsertQuery{
+        if (!self::$db && self::$config->lazyLoad){
+            self::connect();
+        }
         self::$queryBuilder = new InsertQuery(db: self::$db, columns: $columns);
         return self::$queryBuilder;
     }
     public static function update(array $columns): UpdateQuery{
+        if (!self::$db && self::$config->lazyLoad){
+            self::connect();
+        }
         self::$queryBuilder = new UpdateQuery(db: self::$db, columns: $columns);
         return self::$queryBuilder;
     }
     public static function delete(): DeleteQuery{
+        if (!self::$db && self::$config->lazyLoad){
+            self::connect();
+        }
         self::$queryBuilder = new DeleteQuery(db: self::$db);
         return self::$queryBuilder;
     }
     public static function insertOrUpdate(array $columns): InsertOrUpdateQuery{
+        if (!self::$db && self::$config->lazyLoad){
+            self::connect();
+        }
         self::$queryBuilder = new InsertOrUpdateQuery(db: self::$db, columns: $columns);
         return self::$queryBuilder;
     }
 
     /**
-     * Build an `update or insert` query
+     * Build an `Insert or Update` query
      * @param string[] $columns
      * @return Patbase\Builders\InsertOrUpdateQuery
      */

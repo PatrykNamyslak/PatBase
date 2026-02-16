@@ -43,7 +43,8 @@ trait Core{
 
 
 
-/**
+
+    /**
      * Returns an array with the structure expected for `Patbase::constructWithConfig(array $config)`
      * @return string[]
      */

@@ -19,26 +19,26 @@ class Patbase {
 
     /**
      * Summary of __construct
-     * @param DatabaseDriver $driverType
      * @param string $host
      * @param string $username Required for all database drivers except SQL Lite
      * @param string $password
      * @param string $database
+     * @param DatabaseDriver $driverType
      * @param int|string|null $port Required if your database uses a different port than the defaults defined in `Patbase::getDefaultPort()`
      * @param int $fetchMode
      * @param bool $autoConnect Choose to whether connect on object instantation (connect in the constructor)
      * @param array|null $options Extra configuration options for PDO i.e: `[PDO::ATTR_CASE, PDO::CASE_LOWER]` Read more at: https://www.php.net/manual/en/pdo.setattribute.php
      */
     public function __construct(
-        protected DatabaseDriver $driverType = DatabaseDriver::MYSQL, 
         protected string $host, 
         protected ?string $username, 
         protected ?string $password, 
-        protected string $database,
+        protected string $database, 
+        protected DatabaseDriver $driverType = DatabaseDriver::MYSQL, 
         protected int|string|null $port = NULL,
         public int $fetchMode = \PDO::FETCH_ASSOC, 
-        bool $autoConnect = true,
-        protected ?array $options = NULL,
+        bool $autoConnect = true, 
+        protected ?array $options = NULL, 
         ){
             // Just a little heads up in case you choose the wrong driver by accident
             if ($driverType === DatabaseDriver::SQL_LITE && ($username or $password)){
@@ -68,7 +68,8 @@ class Patbase {
             database: $config->database,
             port: $config->port,
             fetchMode: $config->fetchMode,
-            autoConnect: $config->autoConnect,
+            // Flip it to make it make sense. lazyLoad = true means autoconnect is false!
+            autoConnect: !($config->lazyLoad),
             options: $config->options,
         );
     }
