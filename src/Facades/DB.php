@@ -19,7 +19,7 @@ use PatrykNamyslak\Patbase\Enums\EnvironmentVariable;
 use PatrykNamyslak\Patbase\Blueprints\Query;
 use RuntimeException;
 
-final class DB{
+class DB{
     use Core;
     /**
      * The patbase instance that is used for DB calls
