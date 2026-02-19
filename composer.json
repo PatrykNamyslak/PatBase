@@ -9,6 +9,7 @@
     "license": "MIT",
     "autoload": {
         "psr-4": {
+            "PatrykNamyslak\\": "src/",
             "PatrykNamyslak\\Patbase\\": "src/"
         }
     },
