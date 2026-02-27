@@ -4,6 +4,7 @@ Stop hardcoding database drivers. Patbase provides a clean, type-safe interface 
 
 ## Features
 ✅ **DB Facade** - DB Facade + Query builder for faster ship times!
+
 ✅ **9 Database Drivers** - MySQL, PostgreSQL, SQLite, SQL Server, Oracle, and more  
 ✅ **Type-Safe** - PHP 8.4 enums prevent invalid drivers  
 ✅ **Zero Config** - Automatic DSN generation and default ports  
