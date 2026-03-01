@@ -10,7 +10,7 @@ use PatrykNamyslak\Patbase\Traits\Core;
 use PDOException;
 use UnexpectedValueException;
 /**
- * * Datbase abstraction layer for managing database connections using PDO
+ * Database abstraction layer for managing database connections using PDO
  */
 class Patbase {
     use Core;
